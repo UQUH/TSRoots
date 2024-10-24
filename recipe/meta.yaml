@@ -1,0 +1,36 @@
+package:
+  name: tsroots
+  version: "0.1.0"
+
+source:
+  path: ../
+
+build:
+  noarch: python  # This works for Python-only packages
+  script: python -m pip install --no-deps --ignore-installed .  # Build using pip
+
+requirements:
+  build:
+    - python
+    - pip
+  run:
+    - python >=3.7
+    - numpy
+    - scipy
+    - matplotlib
+    - gpytorch
+    - pyDOE
+    - imageio
+  test:
+    - pytest
+    - coverage
+
+about:
+  home: https://github.com/UQUH/TSRoots
+  license: MIT
+  summary: "A Python Package for Bayesian Optimization via Rootfinding."
+
+extra:
+  recipe-maintainers:
+    - TaiwoAdebiyi23
+    - rudazhang

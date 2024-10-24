@@ -91,7 +91,7 @@ lb_x_physical = np.array([-15])
 ub_x_physical = np.array([15])
 no_sample = 5
 D = 1
-seed = 10
+seed = 42
 
 # Generate initial samples and normalize them
 X_physical_space, X_normalized = generate_Xdata(no_sample, D, seed, lb_x_physical, ub_x_physical)
