@@ -50,11 +50,11 @@ print(f"initial minimum point: {(xr_best.item(), yr_best.item())}")
 
 # Create the plot
 fig, ax = plt.subplots(figsize=(8, 4))  # Adjusted size for better fit
-fig.patch.set_facecolor('#D3D3D3')  # Dark gray background
-
-# Remove axes to create a cleaner plot
-ax.set_facecolor('#D3D3D3')  # Set the background of the axes to match
-ax.set_axis_off
+# fig.patch.set_facecolor('#D3D3D3')  # Dark gray background
+#
+# # Remove axes to create a cleaner plot
+# ax.set_facecolor('#D3D3D3')  # Set the background of the axes to match
+# ax.set_axis_off
 
 # Initialize the scatter plot for new points
 sc = ax.scatter([], [], color='blue', marker='x')
