@@ -1,9 +1,9 @@
 
 <div align="center">
-  <img src="TSRoots_Logo.svg" alt="TSRoots_Logo" style="width: 25%;">
+  <img src="docs/img/TSRoots_Logo.svg" alt="TSRoots_Logo" style="width: 25%;">
 </div>
 <div align="center">
-  <img src="bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
+  <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
 </div>
 
 <p align="center">
@@ -75,7 +75,7 @@ python shell/run_all_tests.py
 This example demonstrates the core functionality of TS_roots to generate new points for Bayesian Optimization 
 using normalized data and gradient-based rootfinding techniques.
 For a more detailed overview of model fitting, rootfinding, decoupled GP representation, and BO implementation including
-generating the dynamic plot above, check out the [Getting Started Notebook](notebook_getting_started.ipynb).
+generating the dynamic plot above, check out the [Getting Started Notebook](docs/tutorials/notebook_getting_started.ipynb).
 
 ```python
 import numpy as np

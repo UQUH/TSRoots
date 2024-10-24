@@ -1,0 +1,38 @@
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environment directories
+venv/
+env/
+.venv/
+
+# Ignore coverage and test reports
+htmlcov/
+.coverage
+.coverage.*
+pytest_cache/
+test_results/
+
+# Ignore temporary and backup files
+*.log
+*.tmp
+*~
+
+# Ignore build and distribution files
+build/
+dist/
+*.egg-info/
+
+# Ignore IDE/editor config
+.idea/
+.vscode/
+
+# Ignore notebook checkpoints
+.ipynb_checkpoints
+
+# Ignore 1d_xSinx_functionpy preparation file
+1D_xSinx_function.py
+docs/img/bo_iterations_fixed.gif
+
+
