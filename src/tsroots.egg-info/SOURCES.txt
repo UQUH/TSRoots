@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+src/tsroots/__init__.py
+src/tsroots/decoupled_GP.py
+src/tsroots/max_k_sum.py
+src/tsroots/optim.py
+src/tsroots/preprocessor.py
+src/tsroots/utils.py
+src/tsroots.egg-info/PKG-INFO
+src/tsroots.egg-info/SOURCES.txt
+src/tsroots.egg-info/dependency_links.txt
+src/tsroots.egg-info/requires.txt
+src/tsroots.egg-info/top_level.txt
+tests/test_TS_roots.py
+tests/test_decoupled_GP.py
+tests/test_preprocessor.py

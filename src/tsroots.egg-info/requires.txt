@@ -1,0 +1,21 @@
+numpy
+scipy
+matplotlib
+gpytorch
+pyDOE
+imageio
+
+[chebpy_git]
+chebpy@ git+https://github.com/chebpy/chebpy.git
+
+[docs]
+sphinx
+sphinx-rtd-theme
+
+[pytorch]
+torch
+
+[test]
+pytest
+coverage
+pytest-cov

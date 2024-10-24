@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tsroots"
+version = "0.1.0"
+description = "Optimizing Posterior Samples for Bayesian Optimization via Rootfinding"
+authors = [
+  { name="Taiwo Adebiyi", email="taadebi2@cougarnet.uh.edu" },
+  { name="Ruda Zhang", email="rudaz@uh.edu" },
+  { name="Bach Do", email="bdo3@uh.edu" },
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.7"
+
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "gpytorch",
+  "pyDOE",
+   "imageio",  # For creating GIFs from BO iterations
+  # Omit PyTorch and Chebpy installation by default
+]
+
+[project.optional-dependencies]
+pytorch = [
+  "torch"  # Install the CPU version of PyTorch (optional for users)
+]
+
+chebpy_git = [
+  "chebpy @ git+https://github.com/chebpy/chebpy.git"
+]
+
+docs = [
+  "sphinx",
+  "sphinx-rtd-theme"
+]
+
+test = [
+  "pytest",
+  "coverage",
+  "pytest-cov"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests"
+]
