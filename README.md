@@ -1,7 +1,12 @@
-
 <div align="center">
   <img src="docs/img/TSRoots_Logo.svg" alt="TSRoots_Logo" style="width: 25%;">
 </div>
+
+---
+[![Test Suite](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml/badge.svg)](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+
 <div align="center">
   <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
 </div>

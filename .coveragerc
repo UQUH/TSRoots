@@ -1,0 +1,9 @@
+[run]
+branch = True
+omit =
+    */max_k_sum.py
+    */utils.py
+    */__init__.py
+
+[report]
+show_missing = False
