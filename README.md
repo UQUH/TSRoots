@@ -7,9 +7,7 @@
 </div>
 
 <p align="center">
-    <a href="https://uncertainty-toolbox.github.io/">Website</a>,
-    <a href="https://uncertainty-toolbox.github.io/tutorial/">Tutorials</a>, and
-    <a href="https://uncertainty-toolbox.github.io/docs/">Docs</a>
+    <a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>
 
 &nbsp;\
 **TSRoots**
