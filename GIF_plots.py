@@ -43,7 +43,7 @@ lb_normalized = -np.ones(D)
 ub_normalized = np.ones(D)
 
 # Parameters
-k = 30
+k = 21
 bo_iterMax = 100
 xr_best, yr_best = TSRoots.extract_min(X_physical_space, Y_physical_space)
 print(f"initial minimum point: {(xr_best.item(), yr_best.item())}")
