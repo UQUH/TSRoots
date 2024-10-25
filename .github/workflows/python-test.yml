@@ -1,4 +1,4 @@
-name: TSRoots Unit Tests
+name: Run Test Suite
 
 on:
   push:

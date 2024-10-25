@@ -72,7 +72,7 @@ def update(frame):
     # Apply Bayesian Optimization policy using TS-roots
     TSRoots_BO = TSRoots(X_normalized, Y_normalized.flatten(), lb_normalized, ub_normalized, noise_level=noise_level, learning_rate=0.07, seed=seed)
 
-    x_new_normalized, y_new_normalized, _ = TSRoots_BO.xnew_TSroots()
+    x_new_normalized, y_new_normalized, _ = TSRoots_BO.xnew_TSroots(plot=True)
 
     # Convert new point back to the physical space
     x_new_physical_space = unscale_Xn(x_new_normalized.reshape(-1, D), lb_x_physical, ub_x_physical)

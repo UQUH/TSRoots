@@ -1,8 +1,8 @@
-from .preprocessor import Hyperlearn
-from .preprocessor import SE_Mercer
-from .decoupled_GP import Decoupled_GP
-from .utils import *
-from .max_k_sum import *
+# from tsroots.preprocessor import Hyperlearn
+# from tsroots.preprocessor import SE_Mercer
+# from tsroots.decoupled_GP import Decoupled_GP
+from tsroots.utils import *
+from tsroots.max_k_sum import *
 
 import numpy as np
 from numpy import log
@@ -13,6 +13,7 @@ from pylab import *
 import time
 from chebpy import chebfun
 import matplotlib.pyplot as plt
+
 
 class TSRoots:
     def __init__(self, x_data, y_data, lb, ub, sigma=1.0, noise_level=1e-3, learning_rate=0.05, seed=None):
@@ -29,7 +30,6 @@ class TSRoots:
         self.decoupled_gp = Decoupled_GP(x_data, y_data, sigma=self.sigma, noise_level=self.noise_level,
                                          learning_rate=self.learning_rate, seed=self.seed)
 
-
     def multi_func_roots_cheb(self, lb, ub, W=None, length_scale_vec=None, n_eigen_vec=None, sigma=None, sigmaf=None):
         """
         Find critical points and second derivatives of the GP function using Chebyshev approximation.
@@ -37,14 +37,18 @@ class TSRoots:
         Args:
             lb (list): Lower bounds for each dimension.
             ub (list): Upper bounds for each dimension.
-            W (list, optional): List of weight vectors for each dimension. Defaults to precomputed values if not provided.
-            length_scale_vec (numpy.ndarray, optional): Length scales for each dimension. Defaults to precomputed values if not provided.
-            n_eigen_vec (list, optional): Number of leading eigenfunctions for each dimension. Defaults to precomputed values if not provided.
+            W (list, optional): List of weight vectors for each dimension.
+                                Defaults to precomputed values if not provided.
+            length_scale_vec (numpy.ndarray, optional): Length scales for each dimension.
+                                                        Defaults to precomputed values if not provided.
+            n_eigen_vec (list, optional): Number of leading eigenfunctions for each dimension.
+                                            Defaults to precomputed values if not provided.
             sigma (float, optional): Standard deviation. Defaults to precomputed value if not provided.
             sigmaf (float, optional): Scaling factor for GP function. Defaults to precomputed value if not provided.
 
         Returns:
-            tuple: x_critical (list), func_x_critical (list), dfunc_x_critical(list), d2func_x_critical (list), num_combi (int)
+            tuple: x_critical (list), func_x_critical (list), dfunc_x_critical(list), d2func_x_critical (list),
+                   num_combi (int)
         """
 
         # Use precomputed values if optional arguments are not provided
@@ -134,10 +138,9 @@ class TSRoots:
 
             # Calculate h and handle the last two bounds separately
             h = func * d2func  # Interior points calculation
-            #h[-2:] = func[-2:] * dfunc[-2:]  # Lower and upper bounds (end-1 and end) before RDZ adjustment
+            # h[-2:] = func[-2:] * dfunc[-2:]  # Lower and upper bounds (end-1 and end) before RDZ adjustment
             h[-2] = func[-2] * dfunc[-2]
             h[-1] = func[-1] * (-dfunc[-1])
-
 
             # Find indices for mono and mix candidates in one pass
             monoidx = (h > 0)
@@ -243,7 +246,6 @@ class TSRoots:
             func_multi_dim = np.array([])
 
         return roots_combi, func_multi_dim
-
 
     def ordering_summax_mixed(self, multi_x_cri_mixed, multi_f_mixed, multi_f, k):
         """
@@ -380,9 +382,8 @@ class TSRoots:
         c, ceq = TSRoots.confun(x, X_data)
         return np.hstack((c, ceq))
 
-
     def xnew_TSroots(self, X_data=None, y_data=None, sigma=None, sigmaf=None, sigman=None, length_scale_vec=None,
-                     lb=None, ub=None, residual=None, plot=True):
+                     lb=None, ub=None, residual=None, plot=False):
         """
         Selects a new solution point using TSroots.
 
@@ -581,10 +582,10 @@ if __name__ == "__main__":
     TSRoots_instance = TSRoots(xData, yData, lbS, ubS)
 
     # Accesing some parameters from TSRoots
-    W = TTSRoots_instance.decoupled_gp.W
+    W = TSRoots_instance.decoupled_gp.W
     lengthscales = TSRoots_instance.decoupled_gp.lengthscales
     n_terms = TSRoots_instance.decoupled_gp.n_eigen_vec
-    sigmaf = TTSRoots_instance.decoupled_gp.sigmaf
+    sigmaf = TSRoots_instance.decoupled_gp.sigmaf
     sigman = TSRoots_instance.decoupled_gp.sigman
 
     # Test TSRoots.multi_func_roots_cheb()

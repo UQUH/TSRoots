@@ -1,10 +1,10 @@
-from .preprocessor import SE_Mercer
-from .decoupled_GP import Decoupled_GP
+from tsroots.preprocessor import SE_Mercer
+from tsroots.decoupled_GP import Decoupled_GP
 
 from chebpy import chebfun
 import numpy as np
 import matplotlib.pyplot as plt
-from pyDOE import lhs
+from pyDOE3 import lhs
 import matplotlib.lines as mlines
 
 def lhs_with_bounds(D, no_sample):

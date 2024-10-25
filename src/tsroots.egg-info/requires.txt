@@ -2,11 +2,7 @@ numpy
 scipy
 matplotlib
 gpytorch
-pyDOE
-imageio
-
-[chebpy_git]
-chebpy@ git+https://github.com/chebpy/chebpy.git
+pyDOE3
 
 [docs]
 sphinx

@@ -1,21 +1,20 @@
 Metadata-Version: 2.1
 Name: tsroots
-Version: 0.1.0
+Version: 0.1.12
 Summary: Optimizing Posterior Samples for Bayesian Optimization via Rootfinding
 Author-email: Taiwo Adebiyi <taadebi2@cougarnet.uh.edu>, Ruda Zhang <rudaz@uh.edu>, Bach Do <bdo3@uh.edu>
 License: MIT
+Project-URL: Repository, https://github.com/UQUH/TSRoots
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Requires-Dist: numpy
 Requires-Dist: scipy
 Requires-Dist: matplotlib
 Requires-Dist: gpytorch
-Requires-Dist: pyDOE
-Requires-Dist: imageio
+Requires-Dist: pyDOE3
 Provides-Extra: pytorch
 Requires-Dist: torch; extra == "pytorch"
-Provides-Extra: chebpy-git
-Requires-Dist: chebpy@ git+https://github.com/chebpy/chebpy.git ; extra == "chebpy-git"
 Provides-Extra: docs
 Requires-Dist: sphinx; extra == "docs"
 Requires-Dist: sphinx-rtd-theme; extra == "docs"
@@ -24,23 +23,26 @@ Requires-Dist: pytest; extra == "test"
 Requires-Dist: coverage; extra == "test"
 Requires-Dist: pytest-cov; extra == "test"
 
+<div align="center">
+  <img src="docs/img/TSRoots_Logo.svg" alt="TSRoots_Logo" style="width: 25%;">
+</div>
+
+---
+[![Test Suite](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml/badge.svg)](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
 <div align="center">
-  <img src="TSRoots_Logo.svg" alt="TSRoots_Logo" style="width: 25%;">
-</div>
-<div align="center">
-  <img src="bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
+  <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
 </div>
 
 <p align="center">
-    <a href="https://uncertainty-toolbox.github.io/">Website</a>,
-    <a href="https://uncertainty-toolbox.github.io/tutorial/">Tutorials</a>, and
-    <a href="https://uncertainty-toolbox.github.io/docs/">Docs</a>
+    <a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>
 
 &nbsp;\
 **TSRoots**
 > A Python Package for Efficient Global Optimization of 
-> Posterior-Based Acquisition Functions in Bayesian Optimization
+> Posterior-Based Acquisition Functions via Rootfinding in Bayesian Optimization
 
 &nbsp;\
 Bayesian Optimization (BO) uses acquisition functions as surrogates for expensive objective functions.
@@ -68,9 +70,10 @@ we recommend installing the appropriate version of PyTorch for your system by fo
 [PyTorch Installation Instructions](https://pytorch.org/get-started/locally/). Although least preferd, you can directly 
 install for CPU version by running `pip install torch`. 
 - To install ChebPy, you can see installation instructions here: 
-[Chepy Installation Instructions](https://github.com/chebpy/chebpy/blob/master/INSTALL.rst)
+[Chepy Installation Instructions](https://github.com/chebpy/chebpy/blob/master/INSTALL.rst). You can also directly
+install cheby via `pip install git+https://github.com/chebpy/chebpy.git`
 
-#### You can install the `TSRoots` package in various ways: using `pip`,`conda`, or directly from Github.
+#### Once the above requirements have been satisfied, you can install the `TSRoots` package in various ways: using `pip`,`conda`, or directly from Github.
 
 ### Lightweight Installation of TSRoots
 Using pip:
@@ -91,7 +94,8 @@ it is best to perform a manual installation:
 ```bash
 git clone https://github.com/your_username/TS-roots.git
 cd TS-roots
-pip install -e .[docs,chebpy_git,pytorch,test]
+pip install -e .[docs,pytorch,test]
+pip install git+https://github.com/chebpy/chebpy.git  # Install Chebpy from git
 ````
 
 To verify correct installation, you can run on the [test suite](tests/) on your terminal via:
@@ -103,12 +107,14 @@ python shell/run_all_tests.py
 This example demonstrates the core functionality of TS_roots to generate new points for Bayesian Optimization 
 using normalized data and gradient-based rootfinding techniques.
 For a more detailed overview of model fitting, rootfinding, decoupled GP representation, and BO implementation including
-generating the dynamic plot above, check out the [Getting Started Notebook](notebook_getting_started.ipynb).
+generating the dynamic plot above, check out the [Getting Started Notebook](docs/tutorials/notebook_getting_started.ipynb).
 
 ```python
-import numpy as np
 from tsroots.optim import TSRoots
 from tsroots.utils import generate_Xdata, generate_Ydata
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 # Define the objective function
 def f_objective_example(x):
@@ -119,7 +125,7 @@ lb_x_physical = np.array([-15])
 ub_x_physical = np.array([15])
 no_sample = 5
 D = 1
-seed = 10
+seed = 42
 
 # Generate initial samples and normalize them
 X_physical_space, X_normalized = generate_Xdata(no_sample, D, seed, lb_x_physical, ub_x_physical)
@@ -127,7 +133,10 @@ Y_physical_space, Y_normalized = generate_Ydata(f_objective_example, X_physical_
 
 # Instantiate and use TSRoots for optimization
 TSRoots_BO = TSRoots(X_normalized, Y_normalized.flatten(), -np.ones(D), np.ones(D))
-x_new_normalized, y_new_normalized, _ = TSRoots_BO.xnew_TSroots()
+x_new_normalized, y_new_normalized, _ = TSRoots_BO.xnew_TSroots(plot=True)
+# plot selected point
+plt.scatter(x_new_normalized, y_new_normalized, color='blue', marker='x', linewidth=3.0, label='Selected Point')
+plt.show()
 
 print(f"New observation location: {x_new_normalized}")
 print(f"New function value: {y_new_normalized}")

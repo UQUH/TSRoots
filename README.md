@@ -6,13 +6,15 @@
 [![Test Suite](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml/badge.svg)](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI](https://img.shields.io/pypi/v/tsroots.svg)](https://pypi.org/project/tsroots/)
 
 <div align="center">
   <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
 </div>
 
 <p align="center">
-    <a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>
+    <a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>,
+  <a href="https://github.com/UQUH/TSRoots/tree/main/docs/tutorials">Tutorials</a>
 
 &nbsp;\
 **TSRoots**
@@ -38,16 +40,17 @@ performance in both low- and high-dimensional settings.
 - PyTorch
 - chebpy 
 
-#### Requirments Installation Dependencies
+#### Requirements Installation Dependencies
 Some required dependencies, such as `torch` and `chebpy` are not installed by default. 
 - To install PyTorch,
 we recommend installing the appropriate version of PyTorch for your system by following the instructions here:
-[PyTorch Installation Instructions](https://pytorch.org/get-started/locally/). Although least preferd, you can directly 
+[PyTorch Installation Instructions](https://pytorch.org/get-started/locally/). Although least preferred, you can directly 
 install for CPU version by running `pip install torch`. 
-- To install ChebPy, you can see installation instructions here: 
-[Chepy Installation Instructions](https://github.com/chebpy/chebpy/blob/master/INSTALL.rst)
+- To install chebpy, you can see installation instructions here: 
+[Chepy Installation Instructions](https://github.com/chebpy/chebpy/blob/master/INSTALL.rst). You can also directly
+install chebpy via `pip install git+https://github.com/chebpy/chebpy.git`
 
-#### You can install the `TSRoots` package in various ways: using `pip`,`conda`, or directly from Github.
+#### Once the above requirements have been satisfied, you can install the `TSRoots` package in various ways: using `pip`,`conda`, or directly from Github.
 
 ### Lightweight Installation of TSRoots
 Using pip:
@@ -59,7 +62,6 @@ Via conda:
 conda install -c conda-forge tsroots
 ```
 
-
 ### Development Version
 
 If you are contributing a pull request or for a full installation with examples, tests, and the latest updates, 
@@ -68,7 +70,8 @@ it is best to perform a manual installation:
 ```bash
 git clone https://github.com/your_username/TS-roots.git
 cd TS-roots
-pip install -e .[docs,chebpy_git,pytorch,test]
+pip install -e .[docs,pytorch,test]
+pip install git+https://github.com/chebpy/chebpy.git  # Install Chebpy from git
 ````
 
 To verify correct installation, you can run on the [test suite](tests/) on your terminal via:
@@ -83,9 +86,11 @@ For a more detailed overview of model fitting, rootfinding, decoupled GP represe
 generating the dynamic plot above, check out the [Getting Started Notebook](docs/tutorials/notebook_getting_started.ipynb).
 
 ```python
-import numpy as np
 from tsroots.optim import TSRoots
 from tsroots.utils import generate_Xdata, generate_Ydata
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 # Define the objective function
 def f_objective_example(x):
@@ -104,7 +109,10 @@ Y_physical_space, Y_normalized = generate_Ydata(f_objective_example, X_physical_
 
 # Instantiate and use TSRoots for optimization
 TSRoots_BO = TSRoots(X_normalized, Y_normalized.flatten(), -np.ones(D), np.ones(D))
-x_new_normalized, y_new_normalized, _ = TSRoots_BO.xnew_TSroots()
+x_new_normalized, y_new_normalized, _ = TSRoots_BO.xnew_TSroots(plot=True)
+# plot selected point
+plt.scatter(x_new_normalized, y_new_normalized, color='blue', marker='x', linewidth=3.0, label='Selected Point')
+plt.show()
 
 print(f"New observation location: {x_new_normalized}")
 print(f"New function value: {y_new_normalized}")
@@ -129,6 +137,6 @@ url={https://openreview.net/forum?id=IpRLTVblaV}
 ## The Team
 
 TSRoots is produced by the [Uncertainty Quantification Lab](https://uq.uh.edu/) at the University of Houston; the primary maintainers are:
-- [Taiwo A. Adebiyi](https://www.linkedin.com/in/taiwo-adebiyi-055750174/) 
+- [Taiwo A. Adebiyi](https://scholar.google.com/citations?user=qJdhj-IAAAAJ&hl=en) 
 - [Bach Do](https://scholar.google.com/citations?user=O6vKWWYAAAAJ&hl=en) 
 - [Ruda Zhang](https://scholar.google.com/citations?user=ttmax_wAAAAJ&hl=en)
