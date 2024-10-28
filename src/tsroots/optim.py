@@ -531,7 +531,6 @@ class TSRoots:
                 plot_posterior_TS(self.decoupled_gp, X_data, y_data, length_scale_vec, sigma, sigmaf, sigman, W, v_vec, n_eigen_vec)
                 #plot_posterior_TS(self.decoupled_gp, X_data, y_data, plot_sample_path=True)
 
-
             elif np.shape(X_data)[1] == 2:
                 plot_posterior_TS_2D(self, X_data, y_data, length_scale_vec, sigma, sigmaf, sigman, x_new, y_new)
 

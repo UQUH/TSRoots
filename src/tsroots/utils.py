@@ -296,7 +296,7 @@ def plot_posterior_TS_2D(TS_roots_instance, X_data, Y_data, length_scale_vec, si
     y_true_scaled = np.array([0.0, 0.0, 0.0, 0.0])
 
     # Plot true minima points
-    plt.scatter(X_true_scaled[:, 0], X_true_scaled[:, 1], c='red', marker='*', s=80, label="True minima", zorder=5)
+    plt.scatter(X_true_scaled[:, 0], X_true_scaled[:, 1], c='red', marker='*', s=150, label="True minima", zorder=5)
 
     # Plot the observations (X_data points) as black dots
     plt.scatter(X_data[:, 0], X_data[:, 1], c='black', s=50, label="Observations", zorder=5)

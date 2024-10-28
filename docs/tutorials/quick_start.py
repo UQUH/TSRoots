@@ -1,6 +1,7 @@
 from tsroots.optim import TSRoots
 from tsroots.utils import generate_Xdata, generate_Ydata
 
+
 import numpy as np
 import matplotlib.pyplot as plt
 
