@@ -217,7 +217,7 @@ def plot_posterior_TS(Decoupled_GP_instance, X_data, Y_data, length_scale_vec, s
         y_post = Decoupled_GP_instance.mixPosterior(X_pred, v_vec, X_data, Y_data, W,
                                                     length_scale_vec, n_eigen_vec, sigma, sigmaf, sigma_n, diff=False)
 
-        plt.plot(X_pred, y_post, linewidth=1.5, color='#FFBF00', label='Selected sample path')
+        plt.plot(X_pred, y_post, linewidth=2.5, color='#FFBF00', label='Selected sample path')
 
     Cnn = Decoupled_GP_instance.ard_square_exponential_kernel(X_data, X_data, length_scale_vec, sigmaf,
                                         sigma_n)  # recompute covariance matrix

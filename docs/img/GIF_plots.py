@@ -36,19 +36,24 @@ Y_physical_space, _ = generate_Ydata(f_objective_example, X_physical_space)
 # Update Y_normalized
 Y_physical_space += np.random.normal(0, noise_level)
 Y_normalized = ((Y_physical_space - mean_Y_true) / std_Y_true)
+print(Y_normalized)
 
 # Lower and upper bounds in normalized space
 lb_normalized = -np.ones(D)
 ub_normalized = np.ones(D)
 
 # Parameters
-k = 12
+k = 13
 bo_iterMax = 100
 xr_best, yr_best = TSRoots.extract_min(X_physical_space, Y_physical_space)
 print(f"initial minimum point: {(xr_best.item(), yr_best.item())}")
 
 # Create the plot
 fig, ax = plt.subplots(figsize=(8, 4))  # Adjusted size for better fit
+
+# Set fixed x and y limits for the animation
+ax.set_xlim(-1, 1)  # Adjust based on the normalized x range
+ax.set_ylim(-3.65, 3.4)  # Adjust based on the y range of your function
 
 # Initialize the scatter plot for new points
 sc = ax.scatter([], [], color='blue', marker='x')
@@ -75,6 +80,11 @@ def update(frame):
 
     # Clear the plot
     ax.clear()
+
+    # Reapply fixed limits and grid
+    ax.set_xlim(-1.01, 1.01)
+    ax.set_ylim(-3.5, 3.5)
+    ax.grid(True)  # Optional: add a grid to confirm the axis is active
 
     # Apply Bayesian Optimization policy using TS-roots
     TSRoots_BO = TSRoots(X_normalized, Y_normalized.flatten(), lb_normalized, ub_normalized, noise_level=noise_level,
@@ -103,7 +113,7 @@ def update(frame):
 
     # Set y-axis limit to avoid distraction
     ax.axis('off')
-    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Remove space around the figure
+    plt.subplots_adjust(left=0, right=0.994, top=1.06, bottom=-0.037)  # Remove space around the figure
 
     # Extract the best-found solution so far
     xr_best, yr_best = TSRoots.extract_min(X_physical_space, Y_physical_space)
@@ -116,10 +126,10 @@ def update(frame):
 
     return sc, line
 
-
 # Create the animation
 ani = FuncAnimation(fig, update, frames=range(k), blit=False)
 
 # Save the animation as a GIF
 ani.save('bo_iterations.gif', writer='imagemagick', fps=1, savefig_kwargs={'transparent': True})
 print("GIF has been created and saved as 'bo_iterations.gif' in the current directory.")
+print(f'Y_normaized: {Y_normalized}')
