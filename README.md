@@ -136,7 +136,8 @@ url={https://openreview.net/forum?id=IpRLTVblaV}
 
 ## The Team
 
-TSRoots is produced by the [Uncertainty Quantification Lab](https://uq.uh.edu/) at the University of Houston; the primary maintainers are:
-- [Taiwo A. Adebiyi](https://scholar.google.com/citations?user=qJdhj-IAAAAJ&hl=en) 
-- [Bach Do](https://scholar.google.com/citations?user=O6vKWWYAAAAJ&hl=en) 
-- [Ruda Zhang](https://scholar.google.com/citations?user=ttmax_wAAAAJ&hl=en)
+TSRoots is produced by the [Uncertainty Quantification Lab](https://uq.uh.edu/group-members) at the University of Houston.
+The primary maintainers are:
+- Taiwo A. Adebiyi
+- Bach Do
+- Ruda Zhang
