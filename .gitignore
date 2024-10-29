@@ -34,5 +34,6 @@ dist/
 # Ignore 1d_xSinx_functionpy preparation file
 1D_xSinx_function.py
 docs/img/bo_iterations_fixed.gif
+docs/img/bo_iterations_test.gif
 
 
