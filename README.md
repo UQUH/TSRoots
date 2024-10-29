@@ -50,17 +50,21 @@ install for CPU version by running `pip install torch`.
 [Chepy Installation Instructions](https://github.com/chebpy/chebpy/blob/master/INSTALL.rst). You can also directly
 install chebpy via `pip install git+https://github.com/chebpy/chebpy.git`
 
-#### Once the above requirements have been satisfied, you can install the `TSRoots` package in various ways: using `pip`,`conda`, or directly from Github.
+#### Once the above requirements have been satisfied, you can install the `TSRoots` package in various ways: using `pip`, or directly from Github.
 
 ### Lightweight Installation of TSRoots
 Using pip:
 ```bash
 pip install tsroots
 ```
-Via conda:
-```bash
-conda install -c conda-forge tsroots
-```
+
+[//]: # (Via conda:)
+
+[//]: # (```bash)
+
+[//]: # (conda install -c conda-forge tsroots)
+
+[//]: # (```)
 
 ### Development Version
 
