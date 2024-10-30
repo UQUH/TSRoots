@@ -18,8 +18,7 @@
 
 &nbsp;\
 **TSRoots**
-> A Python Package for Efficient Global Optimization of 
-> Posterior-Based Acquisition Functions via Rootfinding in Bayesian Optimization
+> A Python package for efficient Gaussian process Thompson sampling in Bayesian optimization via rootfinding.
 
 &nbsp;\
 Bayesian Optimization (BO) uses acquisition functions as surrogates for expensive objective functions.
