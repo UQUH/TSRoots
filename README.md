@@ -9,27 +9,27 @@
 [![PyPI](https://img.shields.io/pypi/v/tsroots.svg)](https://pypi.org/project/tsroots/)
 
 <div align="center">
-  <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
+  <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 100%;">
 </div>
 
 <p align="center">
-    <a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>,
-  <a href="https://github.com/UQUH/TSRoots/tree/main/docs/tutorials">Tutorials</a>
+<a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>,
+<a href="https://arxiv.org/abs/2410.22322">Paper</a>,
+<a href="https://github.com/UQUH/TSRoots/tree/main/docs/tutorials">Tutorials</a>
 
 &nbsp;\
 **TSRoots**
 > A Python package for efficient Gaussian process Thompson sampling in Bayesian optimization via rootfinding.
 
 &nbsp;\
-Bayesian Optimization (BO) uses acquisition functions as surrogates for expensive objective functions.
-Thompson Sampling, a popular BO strategy, optimizes posterior samples to guide exploration and exploitation. 
-However, optimizing these samples can be complex and computationally challenging.
+Bayesian optimization (BO) uses acquisition functions to guide the optimization of expensive objective functions.
+Gaussian process Thompson sampling (GP-TS), a popular BO acquisition strategy, optimizes posterior samples to guide exploration and exploitation. 
+However, these samples can be highly complex, which makes their global optimization computationally challenging.
 
-TSRoots streamlines this process by leveraging the separability of the multivariate Gaussian Process prior and
+TSRoots accelerates this process by leveraging the separability of multivariate Gaussian Process priors and
 a decoupled representation of the posterior. Integrated with advanced root-finding techniques, TSRoots 
-efficiently selects starting points for gradient-based multistart optimization. 
-This results in higher-quality solutions for posterior sample-based acquisition functions, enabling robust 
-performance in both low- and high-dimensional settings.
+efficiently and adaptively selects starting points for gradient-based multistart optimization. 
+This results in high-quality solutions for GP-TS, enabling robust performance in both low- and high-dimensional settings.
 
 
 ## Installation
@@ -83,10 +83,10 @@ python shell/run_all_tests.py
 ```
 
 ## Quick Start
-This example demonstrates the core functionality of TS_roots to generate new points for Bayesian Optimization 
+This example demonstrates TSRoots' core functionality of generating new observation points for Bayesian optimization 
 using normalized data and gradient-based rootfinding techniques.
 For a more detailed overview of model fitting, rootfinding, decoupled GP representation, and BO implementation including
-generating the dynamic plot above, check out the [Getting Started Notebook](docs/tutorials/notebook_getting_started.ipynb).
+generating the animated plot above, check out the [Getting Started Notebook](docs/tutorials/notebook_getting_started.ipynb).
 
 ```python
 from tsroots.optim import TSRoots
