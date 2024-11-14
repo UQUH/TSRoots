@@ -71,7 +71,7 @@ If you are contributing a pull request or for a full installation with examples,
 it is best to perform a manual installation:
 
 ```bash
-git clone https://github.com/your_username/TS-roots.git
+git clone [https://github.com/your_username/TS-roots.git](https://github.com/UQUH/TSRoots.git)
 cd TS-roots
 pip install -e .[docs,pytorch,test]
 pip install git+https://github.com/chebpy/chebpy.git  # Install Chebpy from git
