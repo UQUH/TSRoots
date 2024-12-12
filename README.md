@@ -72,7 +72,7 @@ it is best to perform a manual installation:
 
 ```bash
 git clone https://github.com/UQUH/TSRoots.git
-cd TS-roots
+cd TSRoots
 pip install -e .[docs,pytorch,test]
 pip install git+https://github.com/chebpy/chebpy.git  # Install Chebpy from git
 ````
