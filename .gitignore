@@ -31,9 +31,23 @@ dist/
 # Ignore notebook checkpoints
 .ipynb_checkpoints
 
-# Ignore 1d_xSinx_functionpy preparation file
-1D_xSinx_function.py
-docs/img/bo_iterations_fixed.gif
-docs/img/bo_iterations_test.gif
+# Ignore Jupyter configuration files
+etc/jupyter/
+
+# Ignore Python virtual environment configuration
+pyvenv.cfg
 
 
+# Ignore unnecessary Jupyter and tutorial outputs
+docs/tutorials/*.ipynb_checkpoints
+docs/tutorials/__pycache__/
+docs/tutorials/*.pyc
+
+# Ignore shell and script cache
+shell/__pycache__/
+shell/*.pyc
+
+# Ignore unnecessary Lib and Script files (specific to virtual environments)
+Lib/
+Scripts/
+share/

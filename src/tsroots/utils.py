@@ -243,10 +243,6 @@ def plot_posterior_TS(Decoupled_GP_instance, X_data, Y_data, length_scale_vec, s
     if x_new != None and y_new != None:
         # plot new point
         plt.scatter(x_new, y_new, color='blue', linewidth=3, label='post_glob_min')
-    #plt.xlabel('x')
-    #plt.ylabel('y')
-    #plt.legend()
-    #plt.show()
 
 def plot_posterior_TS_2D(TS_roots_instance, X_data, Y_data, length_scale_vec, sigma, sigmaf, sigma_n, X_new=None, y_new=None):
     # Create the figure for plotting

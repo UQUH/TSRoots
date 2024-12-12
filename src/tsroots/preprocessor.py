@@ -1,9 +1,3 @@
-import numpy as np
-import scipy
-from scipy.optimize import minimize
-from chebpy import chebfun
-import matplotlib.pyplot as plt
-import math
 from math import ceil, log, sqrt, exp
 import random
 import time
@@ -38,6 +32,10 @@ class ExactGPModel(ExactGP):
         covar_x = self.covar_module(x)
         return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
+# Detect if GPU is available and set device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
 class Hyperlearn:
 
     """
@@ -65,11 +63,16 @@ class Hyperlearn:
             xData (numpy.ndarray): Input data of shape (n_samples, n_features).
             yData (numpy.ndarray): Target data of shape (n_samples,).
             noise_level (float): Fixed observation noise (i.e., untrained)
-            [PS: code can easily extended to trained observation noise]
+            [PS: code can be easily extended to trained observation noise]
         """
-        # Convert data to PyTorch tensors
-        self.x_data = torch.tensor(x_data, dtype=torch.float32)
-        self.y_data = torch.tensor(y_data, dtype=torch.float32)
+
+        # Detect if GPU is available and set device
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        #print(f"Using device: {device}")
+
+        # Convert data to PyTorch tensors and move to the appropriate device
+        self.x_data = torch.tensor(x_data, dtype=torch.float32).to(device)
+        self.y_data = torch.tensor(y_data, dtype=torch.float32).to(device)
         self.noise_level = noise_level
 
         # Define likelihood
@@ -79,7 +82,7 @@ class Hyperlearn:
         #self.likelihood.noise_covar.raw_noise.requires_grad_(True)
 
         # Define model
-        self.model = ExactGPModel(self.x_data, self.y_data, self.likelihood)
+        self.model = ExactGPModel(self.x_data, self.y_data, self.likelihood).to(device)
 
     def train(self, num_iterations=200, learning_rate=0.1):
         """
@@ -111,7 +114,7 @@ class Hyperlearn:
             #scheduler.step()
 
             # Print the loss at every 10th iteration
-            # if (i + 1) % 10 == 0:
+            # if (i + 1) % 40 == 0:
             #     print(f'Iteration {i + 1}/{num_iterations} - Loss: {loss.item()}')
 
     def get_hyperparameters(self):
@@ -125,7 +128,7 @@ class Hyperlearn:
         self.likelihood.eval()
 
         # Lengthscale (ARD kernel) and signal variance (scale_kernel)
-        lengthscales = self.model.covar_module.base_kernel.lengthscale.detach().numpy().flatten()
+        lengthscales = self.model.covar_module.base_kernel.lengthscale.detach().cpu().numpy().flatten()
         sigmaf = self.model.covar_module.outputscale.item() ** 0.5 # Take the square root of the output scale
 
         # Noise variance (Gaussian likelihood)
@@ -135,7 +138,7 @@ class Hyperlearn:
 
 
 class SE_Mercer:
-    def __init__(self, x_data, y_data, sigma=1.0, noise_level=1e-3, num_iterations=150, learning_rate=0.08):
+    def __init__(self, x_data, y_data, sigma=1.0, noise_level=1e-3, num_iterations=240, learning_rate=0.08):
         """
         Initialize the SE_Mercer class, use Hyperlearn to Gaussian process model's hyperparameters.
 
@@ -243,9 +246,6 @@ class SE_Mercer:
                   random normal values of the corresponding length from n_eigen_vec.
         """
 
-        # if seed != None:
-        #     np.random.seed(seed)
-
         d = len(n_eigen_vec)
         W = []
         for i in range(d):
@@ -319,20 +319,20 @@ class SE_Mercer:
         return phi
 
 
-    def diff_phi(self, n, x, sigma=None, length_scale=None):
+    def diff_phi(self, n, x, sigma=None, length_scale=None, precomputed_phi=None):
         """
-        Computes the first n derivatives of eigenfunctions at N locations x using the recurrence relations
+        Computes the first n derivatives of eigenfunctions at N locations x using the recurrence relations,
+        allowing for precomputed phi and lambda values to avoid recomputation.
 
         Args:
             n (int): number of leading eigenfunctions to return
-
             x (numpy.ndarray): N input locations (N,)
-
             sigma (float, optional): Standard deviation of the Gaussian measure on the real line.
             Defaults to instance attribute if not provided.
-
             length_scale (float, optional): Length scale for one dimension.
             Defaults to instance attribute if not provided.
+            precomputed_phi (numpy.ndarray, optional): Precomputed phi values.
+            precomputed_lambda (numpy.ndarray, optional): Precomputed lambda values.
 
         Returns:
             numpy.ndarray: Derivative of phi values.
@@ -340,13 +340,24 @@ class SE_Mercer:
 
         x = np.asarray(x)
         N = x.shape[0]
-        if sigma == None and length_scale == None:
+
+        # Get parameters if not provided
+        if sigma is None and length_scale is None:
             length_scale_vec, _, _ = self.get_hyperparameters()
             sigma = self.sigma
             length_scale = length_scale_vec.item()
         a, b, c = self.eigen_parameters(sigma, length_scale)
-        phi = self.phi(n, x, sigma, length_scale)
+
+        # Use precomputed phi if available, otherwise compute it
+        if precomputed_phi is not None:
+            phi = precomputed_phi
+        else:
+            phi = self.phi(n, x, sigma, length_scale)
+
+        # Initialize phi_diff array
         phi_diff = np.zeros((N, n))
+
+        # Compute derivatives using recurrence relations
         if n == 0:
             phi_diff[:, 0] = -(c - a) * x * phi[:, 0]
         if n == 1:
@@ -356,10 +367,11 @@ class SE_Mercer:
             phi_diff[:, 0] = -(c - a) * x * phi[:, 0]
             phi_diff[:, 1] = sqrt(2 * c) * (phi[:, 0] + x * phi_diff[:, 0])
             for i in range(2, n):
-                j = i - 1
-                phi_diff[:, i] = sqrt(2 * c / i) * (phi[:, i - 1] + x
-                                                        * phi_diff[:, i - 1]) - sqrt((i - 1) / i) * phi_diff[:, i - 2]
+                phi_diff[:, i] = sqrt(2 * c / i) * (phi[:, i - 1] + x * phi_diff[:, i - 1]) - sqrt(
+                    (i - 1) / i) * phi_diff[:, i - 2]
+
         return phi_diff
+
 
 # Testing the functions
 
@@ -419,10 +431,3 @@ if __name__ == "__main__":
     #Test SE_Mercer.diff_phi()
     print(f'diff_phi no lenscale & sigma:\n {SE_Mercer_instance.diff_phi(10, x)}')
     #print(f'diff_phi:\n {SE_Mercer_instance.diff_phi(10, x, 1.0, 1.0)}')
-
-
-
-
-
-
-

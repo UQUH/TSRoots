@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: tsroots
-Version: 0.1.12
+Version: 0.1.20
 Summary: Optimizing Posterior Samples for Bayesian Optimization via Rootfinding
 Author-email: Taiwo Adebiyi <taadebi2@cougarnet.uh.edu>, Ruda Zhang <rudaz@uh.edu>, Bach Do <bdo3@uh.edu>
 License: MIT
@@ -31,29 +31,30 @@ Requires-Dist: pytest-cov; extra == "test"
 [![Test Suite](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml/badge.svg)](https://github.com/UQUH/TSRoots/actions/workflows/python-test.yml)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI](https://img.shields.io/pypi/v/tsroots.svg)](https://pypi.org/project/tsroots/)
 
 <div align="center">
-  <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 75%;">
+  <img src="docs/img/bo_iterations.gif" alt="BO Iterations GIF" style="width: 100%;">
 </div>
 
 <p align="center">
-    <a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>
+<a href="https://openreview.net/forum?id=IpRLTVblaV">Paper</a>,
+<a href="https://arxiv.org/abs/2410.22322">Paper</a>,
+<a href="https://github.com/UQUH/TSRoots/tree/main/docs/tutorials">Tutorials</a>
 
 &nbsp;\
 **TSRoots**
-> A Python Package for Efficient Global Optimization of 
-> Posterior-Based Acquisition Functions via Rootfinding in Bayesian Optimization
+> A Python package for efficient Gaussian process Thompson sampling in Bayesian optimization via rootfinding.
 
 &nbsp;\
-Bayesian Optimization (BO) uses acquisition functions as surrogates for expensive objective functions.
-Thompson Sampling, a popular BO strategy, optimizes posterior samples to guide exploration and exploitation. 
-However, optimizing these samples can be complex and computationally challenging.
+Bayesian optimization (BO) uses acquisition functions to guide the optimization of expensive objective functions.
+Gaussian process Thompson sampling (GP-TS), a popular BO acquisition strategy, optimizes posterior samples to guide exploration and exploitation. 
+However, these samples can be highly complex, which makes their global optimization computationally challenging.
 
-TSRoots streamlines this process by leveraging the separability of the multivariate Gaussian Process prior and
+TSRoots accelerates this process by leveraging the separability of multivariate Gaussian Process priors and
 a decoupled representation of the posterior. Integrated with advanced root-finding techniques, TSRoots 
-efficiently selects starting points for gradient-based multistart optimization. 
-This results in higher-quality solutions for posterior sample-based acquisition functions, enabling robust 
-performance in both low- and high-dimensional settings.
+efficiently and adaptively selects starting points for gradient-based multistart optimization. 
+This results in high-quality solutions for GP-TS, enabling robust performance in both low- and high-dimensional settings.
 
 
 ## Installation
@@ -63,28 +64,31 @@ performance in both low- and high-dimensional settings.
 - PyTorch
 - chebpy 
 
-#### Requirments Installation Dependencies
+#### Requirements Installation Dependencies
 Some required dependencies, such as `torch` and `chebpy` are not installed by default. 
 - To install PyTorch,
 we recommend installing the appropriate version of PyTorch for your system by following the instructions here:
-[PyTorch Installation Instructions](https://pytorch.org/get-started/locally/). Although least preferd, you can directly 
+[PyTorch Installation Instructions](https://pytorch.org/get-started/locally/). Although least preferred, you can directly 
 install for CPU version by running `pip install torch`. 
-- To install ChebPy, you can see installation instructions here: 
+- To install chebpy, you can see installation instructions here: 
 [Chepy Installation Instructions](https://github.com/chebpy/chebpy/blob/master/INSTALL.rst). You can also directly
-install cheby via `pip install git+https://github.com/chebpy/chebpy.git`
+install chebpy via `pip install git+https://github.com/chebpy/chebpy.git`
 
-#### Once the above requirements have been satisfied, you can install the `TSRoots` package in various ways: using `pip`,`conda`, or directly from Github.
+#### Once the above requirements have been satisfied, you can install the `TSRoots` package in various ways: using `pip`, or directly from Github.
 
 ### Lightweight Installation of TSRoots
 Using pip:
 ```bash
 pip install tsroots
 ```
-Via conda:
-```bash
-conda install -c conda-forge tsroots
-```
 
+[//]: # (Via conda:)
+
+[//]: # (```bash)
+
+[//]: # (conda install -c conda-forge tsroots)
+
+[//]: # (```)
 
 ### Development Version
 
@@ -92,7 +96,7 @@ If you are contributing a pull request or for a full installation with examples,
 it is best to perform a manual installation:
 
 ```bash
-git clone https://github.com/your_username/TS-roots.git
+git clone https://github.com/UQUH/TSRoots.git
 cd TS-roots
 pip install -e .[docs,pytorch,test]
 pip install git+https://github.com/chebpy/chebpy.git  # Install Chebpy from git
@@ -104,10 +108,10 @@ python shell/run_all_tests.py
 ```
 
 ## Quick Start
-This example demonstrates the core functionality of TS_roots to generate new points for Bayesian Optimization 
+This example demonstrates TSRoots' core functionality of generating new observation points for Bayesian optimization 
 using normalized data and gradient-based rootfinding techniques.
 For a more detailed overview of model fitting, rootfinding, decoupled GP representation, and BO implementation including
-generating the dynamic plot above, check out the [Getting Started Notebook](docs/tutorials/notebook_getting_started.ipynb).
+generating the animated plot above, check out the [Getting Started Notebook](docs/tutorials/notebook_getting_started.ipynb).
 
 ```python
 from tsroots.optim import TSRoots
@@ -148,8 +152,7 @@ print(f"New function value: {y_new_normalized}")
 If you found TSRoots helpful, please cite the [following
 paper](https://openreview.net/forum?id=IpRLTVblaV):
 ```
-@inproceedings{
-adebiyi2024gaussian,
+@inproceedings{Adebiyi2024bdu,
 title={Gaussian Process Thompson Sampling via Rootfinding},
 author={Taiwo Adebiyi and Bach Do and Ruda Zhang},
 booktitle={NeurIPS 2024 Workshop on Bayesian Decision-making and Uncertainty},
@@ -158,9 +161,22 @@ url={https://openreview.net/forum?id=IpRLTVblaV}
 }
 ```
 
+The full-length paper is available at:
+```
+@misc{Adebiyi2024tsroots,
+title={Optimizing Posterior Samples for Bayesian Optimization via Rootfinding}, 
+author={Taiwo A. Adebiyi and Bach Do and Ruda Zhang},
+year={2024},
+eprint={2410.22322},
+archivePrefix={arXiv},
+url={https://arxiv.org/abs/2410.22322}, 
+}
+```
+
 ## The Team
 
-TSRoots is produced by the [Uncertainty Quantification Lab](https://uq.uh.edu/) at the University of Houston; the primary maintainers are:
-- [Taiwo A. Adebiyi](https://www.linkedin.com/in/taiwo-adebiyi-055750174/) 
-- [Bach Do](https://scholar.google.com/citations?user=O6vKWWYAAAAJ&hl=en) 
-- [Ruda Zhang](https://scholar.google.com/citations?user=ttmax_wAAAAJ&hl=en)
+TSRoots is produced by the [Uncertainty Quantification Lab](https://uq.uh.edu/group-members) at the University of Houston.
+The primary maintainers are:
+- Taiwo A. Adebiyi
+- Bach Do
+- Ruda Zhang

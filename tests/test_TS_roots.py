@@ -96,6 +96,9 @@ def test_xnew_TSroots_with_scaling(sample_data):
 
     # Since y_new_normalized is a float, we check if it's a scalar
     assert isinstance(y_new_normalized, (int, float)), "y_new_normalized should be a scalar value"
+    print(f"x_new_normalized: {x_new_normalized}, shape: {x_new_normalized.shape}")
+    print(f"y_new_normalized: {y_new_normalized}, type: {type(y_new_normalized)}")
+
 
     # Check that the new points are within the scaled bounds
     assert lbS <= x_new_normalized <= ubS, "x_new_normalized is out of bounds"
