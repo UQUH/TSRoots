@@ -1,6 +1,6 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.2
 Name: tsroots
-Version: 0.1.20
+Version: 0.1.21
 Summary: Optimizing Posterior Samples for Bayesian Optimization via Rootfinding
 Author-email: Taiwo Adebiyi <taadebi2@cougarnet.uh.edu>, Ruda Zhang <rudaz@uh.edu>, Bach Do <bdo3@uh.edu>
 License: MIT
@@ -13,6 +13,7 @@ Requires-Dist: scipy
 Requires-Dist: matplotlib
 Requires-Dist: gpytorch
 Requires-Dist: pyDOE3
+Requires-Dist: joblib
 Provides-Extra: pytorch
 Requires-Dist: torch; extra == "pytorch"
 Provides-Extra: docs
@@ -97,7 +98,7 @@ it is best to perform a manual installation:
 
 ```bash
 git clone https://github.com/UQUH/TSRoots.git
-cd TS-roots
+cd TSRoots
 pip install -e .[docs,pytorch,test]
 pip install git+https://github.com/chebpy/chebpy.git  # Install Chebpy from git
 ````

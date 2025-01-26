@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tsroots"
-version = "0.1.20"
+version = "0.1.21"
 description = "Optimizing Posterior Samples for Bayesian Optimization via Rootfinding"
 authors = [
   { name="Taiwo Adebiyi", email="taadebi2@cougarnet.uh.edu" },
@@ -23,6 +23,7 @@ dependencies = [
   "matplotlib",
   "gpytorch",
   "pyDOE3",
+  "joblib",
    #"imageio",  # For creating GIFs from BO iterations
   # Omit PyTorch and Chebpy installation by default
 ]

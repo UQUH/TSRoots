@@ -3,6 +3,7 @@ scipy
 matplotlib
 gpytorch
 pyDOE3
+joblib
 
 [docs]
 sphinx

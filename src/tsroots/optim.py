@@ -1,5 +1,6 @@
 from tsroots.utils import *
 from tsroots.max_k_sum import *
+from joblib import Parallel, delayed
 
 from scipy.optimize import minimize, Bounds
 from pylab import *
@@ -183,10 +184,10 @@ class TSRoots:
             s_one[i] = n_plus_one - n_minus_one
 
         # Calculate final metrics across dimensions
-        N_zero = np.prod(n_zero)
-        N_one = np.prod(n_one)
-        S_zero = np.prod(s_zero)
-        S_one = np.prod(s_one)
+        N_zero = np.prod(n_zero, dtype=np.int64)
+        N_one = np.prod(n_one, dtype=np.int64)
+        S_zero = np.prod(s_zero, dtype=np.int64)
+        S_one = np.prod(s_one, dtype=np.int64)
         # Calculate the number of possible combinations
         no_combi_mixed = np.prod(no_mixed) if np.prod(no_mixed) > 0 else 0
 
@@ -195,7 +196,7 @@ class TSRoots:
         return x_critical_mono, x_critical_mixed, func_x_critical_mono, func_x_critical_mixed, N_zero, N_one, S_zero, S_one
 
     @staticmethod
-    def fullfact_design(levels):
+    def fullfact_design(levels): # ---------------------------> possibly use full fact from PyDOE
         """
         Generate a full factorial design matrix based on the given levels.
 
@@ -302,7 +303,7 @@ class TSRoots:
         f_matrix = np.zeros((k, d))
 
         # Populate the matrices using advanced indexing for faster execution
-        for j in range(k):
+        for j in range(min(k, len(ORD_max))):
             x_matrix_max[j, :] = np.array([multi_x_cri_mixed[i][ORD_max[j][i]] for i in range(d)])
             f_matrix[j, :] = np.array([multi_f_mixed[i][ORD_max[j][i]] for i in range(d)])
 
@@ -346,7 +347,7 @@ class TSRoots:
         f_matrix = np.zeros((k, d))
 
         # Populate the matrices using advanced indexing for faster execution
-        for j in range(k):
+        for j in range(min(k, len(ORD_max))):
             x_matrix_max[j, :] = np.array([multi_x_cri_mono[i][ORD_max[j][i]] for i in range(d)])
             f_matrix[j, :] = np.array([multi_f_mono[i][ORD_max[j][i]] for i in range(d)])
 
@@ -411,23 +412,58 @@ class TSRoots:
                 best_result = result
         return best_result
 
+    @staticmethod
+    def parallel_multistart_optimization(objective_func, jac_func, initial_guesses, method='SLSQP', n_jobs=-1,
+                                         **kwargs):
+        """
+        Perform parallel multistart optimization using different initial guesses.
+
+        Args:
+            objective_func (callable): The objective function.
+            jac_func (callable): The Jacobian (derivative) function.
+            initial_guesses (list of arrays): A list of initial guesses to start optimization from.
+            method (str): Optimization method (default is 'SLSQP').
+            n_jobs (int): Number of parallel jobs (default is -1 for all CPUs).
+            **kwargs: Additional keyword arguments for scipy.optimize.minimize.
+
+        Returns:
+            result (OptimizeResult): The best optimization result.
+        """
+
+        def optimize_single(x0):
+            return minimize(fun=objective_func, x0=x0, jac=jac_func, method=method, **kwargs)
+
+        results = Parallel(n_jobs=n_jobs)(delayed(optimize_single)(x0) for x0 in initial_guesses)
+        best_result = min(results, key=lambda res: res.fun)
+        return best_result
+
     def xnew_TSroots(self, X_data=None, y_data=None, sigma=None, sigmaf=None, sigman=None, length_scale_vec=None,
                             lb=None, ub=None, residual=None, n_o=None, n_e=None, n_x=None, plot=False):
         """
-        Selects a new solution point using TSroots.
+         Selects a new solution point using TSroots.
 
-        Args:
-            X_data (ndarray, optional): Input data of shape (n, d). Defaults to precomputed values if not provided.
-            y_data (ndarray, optional): Output data of shape (n, 1). Defaults to precomputed values if not provided.
-            sigmaf (float, optional): Marginal standard deviation. Defaults to precomputed value if not provided.
-            length_scale_vec (ndarray, optional): Vector of length scales of the ARD SE kernel of shape (1, d).
-                                                    Defaults to precomputed values if not provided.
-            lb (ndarray, optional): Lower bound vector of shape (1, d). Defaults to instance's lb if not provided.
-            ub (ndarray, optional): Upper bound vector of shape (1, d). Defaults to instance's ub if not provided.
+         Args:
+             X_data (ndarray, optional): Input data of shape (n, d). Defaults to precomputed values if not provided.
+             y_data (ndarray, optional): Output data of shape (n, 1). Defaults to precomputed values if not provided.
+             sigma (float, optional): Noise standard deviation. Defaults to precomputed value if not provided.
+             sigmaf (float, optional): Marginal standard deviation. Defaults to precomputed value if not provided.
+             sigman (float, optional): Standard deviation of noise in observations. Defaults to precomputed value if not provided.
+             length_scale_vec (ndarray, optional): Vector of length scales for the ARD SE kernel of shape (1, d).
+                                                   Defaults to precomputed values if not provided.
+             lb (ndarray, optional): Lower bound vector of shape (1, d). Defaults to instance's lower bound if not provided.
+             ub (ndarray, optional): Upper bound vector of shape (1, d). Defaults to instance's upper bound if not provided.
+             residual (float, optional): Residual threshold for numerical stability in eigenvalue computations. Defaults to 1e-16.
+             n_o (int, optional): Number of optimization points for mixed candidates. Defaults to 5000.
+             n_e (int, optional): Number of exploration points. Defaults to 50.
+             n_x (int, optional): Number of exploitation points. Defaults to 25.
+             plot (bool, optional): Whether to plot posterior results. Defaults to False.
 
-        Returns:
-            tuple: x_new (ndarray), y_new (float), no_iniPoints (int)
-        """
+         Returns:
+             tuple:
+                 - x_new (ndarray): The newly selected solution point of shape (1, d).
+                 - y_new (float): The function value at the new solution point.
+                 - no_iniPoints (int): Number of initial points used in optimization.
+         """
 
         # Use precomputed values if optional arguments are not provided
         if X_data is None:
@@ -451,9 +487,9 @@ class TSRoots:
         if n_o is None:
             n_o = 5000
         if n_e is None:
-            n_e = 1000
+            n_e = 50
         if n_x is None:
-            n_x = 1000
+            n_x = 25
 
 
         # Get n_eigen_vec and W_array from precomputed values
@@ -483,8 +519,11 @@ class TSRoots:
         if n_o <= num_neg_local_min:
             print("# We select a subset of the set of all possible combinations...")
 
+            #print(f'check valid k requests: {len(multi_x_cri_mixed) >= int(round(alpha * n_o, 0))}')
+
             combiroots_mixed, _, negaidx = self.ordering_summax_mixed(multi_x_cri_mixed, multi_f_mixed, multi_f,
                                                                       int(round(alpha * n_o,  0)))
+
             x_min = combiroots_mixed[negaidx, :]  # Keep only candidates with negative function values
             if len(x_min) >= n_o:
                 x_min = x_min[:n_o]  # The n_o smallest f in mixed local min
@@ -514,7 +553,7 @@ class TSRoots:
                 combiroots_mono, _, posiidx = self.ordering_summax_mono(multi_x_cri_mono, multi_f_mono, multi_f,
                                                                         int(round(alpha * (n_o - num_neg_local_min),
                                                                                   0)))
-                x_min_mono = combiroots_mono[posiidx, :]  # Keep only candidates with negative function values
+                x_min_mono = combiroots_mono[posiidx, :] if len(posiidx) > 0 else [] # Keep only candidates with negative function values
                 if len(x_min_mono) >= int(round(n_o - num_neg_local_min)):
                     x_min_mono = x_min_mono[
                                  :int(round(n_o - num_neg_local_min))]  # The n_o smallest f in mixed local min
@@ -534,7 +573,7 @@ class TSRoots:
                 posi_fmonoidx_sorted = posi_fmonoidx[sorted_indices_within_positives]
 
                 # Filter and sort xmin_mono based on the indices
-                xmin_mono = combiroots_mono[posi_fmonoidx_sorted, :] if len(posi_fmonoidx_sorted) > 0 else []
+                xmin_mono = combiroots_mono[posi_fmonoidx_sorted, :] if len(posi_fmonoidx_sorted) > 0 else np.empty((0, len(lb)))
             x_min = [xmin_mono, xmin_mixed]
 
             # Filter out any empty arrays before concatenation
@@ -586,12 +625,11 @@ class TSRoots:
             'maxiter': 500
         }
 
-        # Perform multistart optimization
-        start = time.time()
-        # Perform multistart optimization and get indices of initial guesses that converged to the best local minimum
-        best_result = self.multistart_optimization(
-            objective_value, objective_derivative, x_start, bounds=bounds, options=options
-        )
+
+        # Perform parallel multistart optimization
+
+        best_result = self.parallel_multistart_optimization(
+        objective_value, objective_derivative, x_start, bounds=bounds, options=options)
 
         x_new = best_result.x
         y_new = best_result.fun

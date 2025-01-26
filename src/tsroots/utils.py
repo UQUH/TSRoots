@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from pyDOE3 import lhs
 import matplotlib.lines as mlines
 
-def lhs_with_bounds(D, no_sample):
+def lhs_with_bounds(D, no_sample, random_state=None):
     """
     Generates a Latin Hypercube Sampling plan with bounds included in the samples.
 
@@ -19,7 +19,12 @@ def lhs_with_bounds(D, no_sample):
     X_s1 (ndarray): LHS samples in [0, 1]^D, with bounds included.
     """
     # Latin hypercube sampling plan in [0,1]^D
-    X_s1 = lhs(D, samples=no_sample - 2, criterion='centermaximin')  #centermaximin
+    #X_s1 = lhs(D, samples=no_sample - 2, criterion='centermaximin')  #centermaximin
+
+    # Latin hypercube sampling plan in [0,1]^D
+    if random_state is None:
+        random_state = np.random
+    X_s1 = lhs(D, samples=no_sample - 2, criterion='centermaximin', random_state=random_state)
 
     # Manually add lower and upper bounds
     lower_bound = np.zeros((1, D))
@@ -82,6 +87,46 @@ def unscale_Xn(X_scaled, lbX, ubX):
 
     return X_data
 
+def scale_X_unit(Xdata, lbX, ubX):
+    """
+    Scale the input matrix Xdata to the range [0, 1].
+
+    Parameters:
+    Xdata (numpy.ndarray): N-by-D matrix of input variables
+    lbX (numpy.ndarray): 1-by-D array of lower bounds of input variables
+    ubX (numpy.ndarray): 1-by-D array of upper bounds of input variables
+
+    Returns:
+    numpy.ndarray: Scaled input matrix
+    """
+    X_scaled = np.zeros_like(Xdata)
+    for i in range(Xdata.shape[1]):
+        X_scaled[:, i] = (Xdata[:, i] - lbX[i]) / (ubX[i] - lbX[i])
+    return X_scaled
+
+def unscale_X_unit(X_scaled, lbX, ubX):
+    """
+    Convert scaled input variables in [0, 1] back to their physical values.
+
+    Parameters:
+    X_scaled : ndarray
+        N-by-D matrix of scaled input variables in [0, 1].
+    lbX : ndarray
+        1D array of lower bounds of input variables.
+    ubX : ndarray
+        1D array of upper bounds of input variables.
+
+    Returns:
+    X_data : ndarray
+        Matrix of physical input variables.
+    """
+    X_data = np.zeros_like(X_scaled)
+    for i in range(X_scaled.shape[1]):
+        X_data[:, i] = X_scaled[:, i] * (ubX[i] - lbX[i]) + lbX[i]
+    return X_data
+
+
+
 def scale_Y(Ydata):
     """
     Scale the output data Ydata to have zero mean and unit variance.
@@ -114,7 +159,7 @@ def unscale_Y(Y_scaled, mean_Y, std_Y):
 
 def generate_Xdata(no_sample, D, Seed, lbX, ubX):
     """
-    Generate samples of input variables in both physical and standardized space.
+    Generate samples of input variables in both physical and standardized space [-1, 1].
 
     Parameters:
     no_sample (int): Number of initial samples.
@@ -128,9 +173,11 @@ def generate_Xdata(no_sample, D, Seed, lbX, ubX):
     X_s (ndarray): Samples of input variables in standardized space (no_sample by D).
     """
     np.random.seed(Seed)
+    random_state = np.random.RandomState(Seed)
 
     # Latin hypercube sampling plan in [0,1]^D
-    X_s1 = lhs_with_bounds(D, no_sample)
+    X_s1 = lhs_with_bounds(D, no_sample, random_state=random_state)
+
     #X_s1 = rlh(no_sample, D, Seed, 1)
 
     #np.random.seed()
@@ -139,6 +186,32 @@ def generate_Xdata(no_sample, D, Seed, lbX, ubX):
 
     # Convert physical data to standardized space [-1, 1]^D
     X_s = scale_Xn(X_r, lbX, ubX)
+
+    return X_r, X_s
+
+def generate_Xdata_unit(no_sample, D, Seed, lbX, ubX):
+    """
+    Generate samples of input variables in both physical and standardized [0, 1] space.
+
+    Parameters:
+    no_sample (int): Number of initial samples.
+    D (int): Number of input variables.
+    Seed (int): Random seed for reproducibility.
+    lbX (array-like): Lower bounds of input variables (1 by D).
+    ubX (array-like): Upper bounds of input variables (1 by D).
+
+    Returns:
+    X_r (ndarray): Samples of input variables in physical space (no_sample by D).
+    X_s (ndarray): Samples of input variables in [0, 1] space (no_sample by D).
+    """
+    np.random.seed(Seed)
+    random_state = np.random.RandomState(Seed)
+
+    # Latin hypercube sampling in [0, 1]^D
+    X_s = lhs_with_bounds(D, no_sample, random_state=random_state)
+
+    # Convert standardized [0, 1] data to physical data
+    X_r = unscale_X(X_s, lbX, ubX)
 
     return X_r, X_s
 

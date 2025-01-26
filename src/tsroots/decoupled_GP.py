@@ -193,7 +193,7 @@ class Decoupled_GP:
 
         return K
 
-    def cross_covariance_kernel(self, X1, X, lengthscales=None, sigmaf=None):
+    def cross_covariance_kernel(self, X1, X, lengthscales=None, sigmaf=None): # -----------------> # merge cross and derivative as one to avoid recomputations
         """
         Computes the cross-covariance kernel between training inputs X1 and unseen inputs X.
 
@@ -240,9 +240,9 @@ class Decoupled_GP:
         sqdist = cdist(X1_scaled, X_scaled, metric='sqeuclidean')
 
         # Compute the cross-covariance kernel matrix
-        K_cross = sigmaf ** 2 * np.exp(-0.5 * sqdist)
+        self.K_cross = sigmaf ** 2 * np.exp(-0.5 * sqdist)
 
-        return K_cross
+        return self.K_cross
 
     def derivative_ard_cross_covariance_kernel(self, X1, X, lengthscales=None, sigmaf=None):
         """
@@ -284,11 +284,11 @@ class Decoupled_GP:
             raise ValueError("Lengthscales must have the same number of dimensions as the input points")
 
         # Compute the cross-covariance kernel matrix
-        K_cross = self.cross_covariance_kernel(X1, X, lengthscales, sigmaf)
+        #K_cross = self.cross_covariance_kernel(X1, X, lengthscales, sigmaf)
 
         # Vectorized computation of derivative
         diff = (X1[:, np.newaxis, :] - X[np.newaxis, :, :]) / (lengthscales ** 2)
-        dK_cross = diff * K_cross[..., np.newaxis]  # Broadcasting to multiply K_cross with diff
+        dK_cross = diff * self.K_cross[..., np.newaxis]  # Broadcasting to multiply K_cross with diff
 
         # Flatten the derivative matrix
         dK_cross_flattened = dK_cross.reshape(X1.shape[0], -1)
