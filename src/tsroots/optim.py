@@ -212,8 +212,8 @@ class TSRoots:
         """
 
         n = len(levels)  # number of factors
-        nb_lines = np.prod(levels)  # number of trial conditions
-        H = np.zeros((nb_lines, n), dtype=int)  # Initialize the design matrix
+        nb_lines = int(np.prod(levels, dtype=object))  # Use object dtype for the product
+        H = np.zeros((nb_lines, n), dtype=np.int64)  # Initialize the design matrix
         level_repeat = 1
         range_repeat = np.prod(levels)
 
