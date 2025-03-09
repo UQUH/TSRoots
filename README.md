@@ -125,28 +125,17 @@ print(f"New function value: {y_new_normalized}")
 ## Citation
 
 If you found TSRoots helpful, please cite the [following
-paper](https://openreview.net/forum?id=IpRLTVblaV):
+paper](https://openreview.net/forum?id=I6UbnkUveF):
 ```
-@inproceedings{Adebiyi2024bdu,
-title={Gaussian Process Thompson Sampling via Rootfinding},
+@inproceedings{Adebiyi2025tsroots,
+title={Optimizing Posterior Samples for Bayesian Optimization via Rootfinding},
 author={Taiwo Adebiyi and Bach Do and Ruda Zhang},
-booktitle={NeurIPS 2024 Workshop on Bayesian Decision-making and Uncertainty},
-year={2024},
-url={https://openreview.net/forum?id=IpRLTVblaV}
+booktitle={The Thirteenth International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=I6UbnkUveF}
 }
 ```
 
-The full-length paper is available at:
-```
-@misc{Adebiyi2024tsroots,
-title={Optimizing Posterior Samples for Bayesian Optimization via Rootfinding}, 
-author={Taiwo A. Adebiyi and Bach Do and Ruda Zhang},
-year={2024},
-eprint={2410.22322},
-archivePrefix={arXiv},
-url={https://arxiv.org/abs/2410.22322}, 
-}
-```
 
 ## The Team
 
