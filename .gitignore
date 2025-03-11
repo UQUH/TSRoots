@@ -51,3 +51,6 @@ shell/*.pyc
 Lib/
 Scripts/
 share/
+
+# Ignore 100D-david-sweet-problem
+david_sweet.ipynb

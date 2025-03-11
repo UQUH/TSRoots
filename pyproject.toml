@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tsroots"
-version = "0.1.21"
+version = "0.1.22"
 description = "Optimizing Posterior Samples for Bayesian Optimization via Rootfinding"
 authors = [
   { name="Taiwo Adebiyi", email="taadebi2@cougarnet.uh.edu" },

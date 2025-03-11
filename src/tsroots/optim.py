@@ -6,6 +6,7 @@ from scipy.optimize import minimize, Bounds
 from pylab import *
 import time
 from chebpy import chebfun
+from pprint import pprint
 
 class TSRoots:
     def __init__(self, x_data, y_data, lb, ub, sigma=1.0, noise_level=1e-3, learning_rate=0.07, seed=None):
@@ -174,6 +175,9 @@ class TSRoots:
             neg_Pineg_Ji = neg_P_i & neg_J_i
 
             # Sum metrics for current dimension
+            # Note 1: For n_zero, the conditions for the four possible root checks tend to diverge from zero.
+            # In higher dimensions, the initial prior assumption of a zero mean further reduces the number
+            # of critical points that satisfy these conditions (i.e., J_i = fh > 0).
             n_zero[i] = np.sum(J_i)
             n_one[i] = np.sum(neg_J_i)
             n_plus_zero = np.sum(PiJi)
@@ -183,15 +187,43 @@ class TSRoots:
             s_zero[i] = n_plus_zero - n_minus_zero
             s_one[i] = n_plus_one - n_minus_one
 
+        # ------------------------------------------
         # Calculate final metrics across dimensions
+        # --------------------------------------------
+        # Since some n_zero coordinae tensor grids are non existent (see Note 1 above),
+        # the N_o tensor grid sizes for all coordinates (i..e, product across all coordinates) mostly
+        # equal to zero in higher dimensions. In such case, N_one solely governs the
+        # num_local_min and num_neg_local_min calculations.
         N_zero = np.prod(n_zero, dtype=np.int64)
-        N_one = np.prod(n_one, dtype=np.int64)
-        S_zero = np.prod(s_zero, dtype=np.int64)
-        S_one = np.prod(s_one, dtype=np.int64)
+
+        N_one = np.prod(n_one, dtype=np.float64) #np.prod(n_one, dtype=np.int64)
+        # N_one_object = np.prod(n_one, dtype=np.float64) --> the N_one_object attempted to enforce arbitrary product
+        # multplication but didn't work well in further computations for num_neg_local_min
+
+        S_zero = np.prod(s_zero, dtype=np.float64)
+        S_one = np.prod(s_one, dtype=np.float64)
+
         # Calculate the number of possible combinations
         no_combi_mixed = np.prod(no_mixed) if np.prod(no_mixed) > 0 else 0
-
         no_combi_mono = np.prod(no_mono) if np.prod(no_mono) > 0 else 0
+
+        metrics_dict = {
+            "no_mixed": no_mixed,
+            "no_combi_mixed": no_combi_mixed,
+            "no_mono": no_mono,
+            "no_combi_mono": no_combi_mono,
+            "n_zero": n_zero,
+            "n_one": n_one,
+            "s_zero": s_zero,
+            "s_one": s_one,
+            "N_zero": N_zero,
+            "N_one": N_one,
+            "S_zero": S_zero,
+            "S_one": S_one,
+        }
+
+        # Print the dictionary in a structured format (uncomment below for debugging purposes)
+        # pprint(metrics_dict, sort_dicts=False)
 
         return x_critical_mono, x_critical_mixed, func_x_critical_mono, func_x_critical_mixed, N_zero, N_one, S_zero, S_one
 
@@ -210,9 +242,9 @@ class TSRoots:
         Returns:
             numpy.ndarray: A full factorial design matrix.
         """
-
         n = len(levels)  # number of factors
-        nb_lines = int(np.prod(levels, dtype=object))  # Use object dtype for the product
+        nb_lines = np.prod(levels, dtype=np.int64)  # number of trial conditions
+        #nb_lines = int(np.prod(levels, dtype=object))  # Use object dtype for arbitrary product multiplication
         H = np.zeros((nb_lines, n), dtype=np.int64)  # Initialize the design matrix
         level_repeat = 1
         range_repeat = np.prod(levels)
@@ -501,7 +533,6 @@ class TSRoots:
         v_vec = self.decoupled_gp.v_vec(X_data, y_data, W, length_scale_vec, n_eigen_vec, sigma, sigmaf, sigman)
 
         # Compute local minima using multi_func_roots_cheb
-        n_o_limit = 500  # set to 5000
         multi_x_cri, multi_f, multi_df, multi_d2f, _ = self.multi_func_roots_cheb(lb=lb, ub=ub, W=W,
                                                                                   length_scale_vec=length_scale_vec,
                                                                                   n_eigen_vec=n_eigen_vec,
@@ -512,11 +543,11 @@ class TSRoots:
             self.sort_mixed_mono_final(multi_x_cri, multi_f, multi_df, multi_d2f)
 
         alpha = 3
+        #print(f'num_local_min: {(round(0.5 * (N_one - S_one + N_zero + S_zero), 0))}')
         num_local_min = int(round(0.5 * (N_one - S_one + N_zero + S_zero), 0))
         num_neg_local_min = int(round(0.5 * (N_one - S_one), 0))
 
-
-        if n_o <= num_neg_local_min:
+        if n_o <= num_neg_local_min or num_neg_local_min < 0:  # added second condition to handle large integer multiplication
             print("# We select a subset of the set of all possible combinations...")
 
             #print(f'check valid k requests: {len(multi_x_cri_mixed) >= int(round(alpha * n_o, 0))}')

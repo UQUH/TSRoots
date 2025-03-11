@@ -29,5 +29,6 @@ print(f"New observation location: {x_new_normalized}")
 print(f"New function value: {y_new_normalized}")
 
 # plot selected point
+plt.figure(figsize=(10, 6))
 plt.scatter(x_new_normalized, y_new_normalized, color='blue', marker='x', linewidth=3.0, label='Selected Point')
 plt.show()
